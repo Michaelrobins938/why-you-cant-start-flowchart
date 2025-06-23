@@ -202,6 +202,11 @@
             pointer-events: auto;
         }
 
+        .intro-scene.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         /* Main flowchart styles */
         .main-scene {
             opacity: 0;
@@ -383,33 +388,6 @@
         @keyframes blink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
-        }
-
-        .continue-btn {
-            background: linear-gradient(45deg, #8A2BE2, #FF1493);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 25px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 2rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
-            font-family: 'Courier New', monospace;
-            width: 100%;
-        }
-
-        .continue-btn.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .continue-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.5);
         }
 
         /* Flowchart Styles */
@@ -714,15 +692,6 @@
                 <div class="dialogue-text" id="dialogue"></div>
             </div>
         </div>
-
-        <!-- Final continue button (separate from moving chatbox) -->
-        <div class="moving-chatbox position-bottom-center" id="finalButton" style="opacity: 0;">
-            <div class="chatbox">
-                <button class="continue-btn" id="continueBtn" onclick="enterMainApp()">
-                    Enter the Diagnostic Zone
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- Main Application -->
@@ -848,7 +817,7 @@
             {
                 text: "Ready to meet your mind's most creative excuses?",
                 position: "position-bottom-center",
-                duration: 3500
+                duration: 4000
             }
         ];
 
@@ -1122,13 +1091,13 @@
                 await new Promise(resolve => setTimeout(resolve, segment.duration));
             }
             
-            // Final fade out and show continue button
+            // Final fade out and transition to main app
             chatbox.classList.add('fade-out');
+            
+            // Wait a moment then transition to the diagnostic tool
             setTimeout(() => {
-                const finalButton = document.getElementById('finalButton');
-                finalButton.style.opacity = '1';
-                document.getElementById('continueBtn').classList.add('visible');
-            }, 800);
+                enterMainApp();
+            }, 2000);
         }
 
         // Typing sound effect
@@ -1196,13 +1165,17 @@
             const introScene = document.getElementById('introScene');
             const mainScene = document.getElementById('mainScene');
             
-            introScene.classList.remove('active');
+            introScene.classList.add('fade-out');
             
             setTimeout(() => {
                 mainScene.classList.add('active');
                 createStarfield(document.getElementById('mainCosmicBg'));
                 initializeFlowchart();
             }, 1000);
+            
+            setTimeout(() => {
+                introScene.style.display = 'none';
+            }, 2000);
         }
 
         function showIntro() {
@@ -1210,13 +1183,13 @@
             const mainScene = document.getElementById('mainScene');
             
             mainScene.classList.remove('active');
+            introScene.style.display = 'block';
+            introScene.classList.remove('fade-out');
             introScene.classList.add('active');
             
             // Reset intro state
             currentSegmentIndex = 0;
             document.getElementById('movingChatbox').className = 'moving-chatbox position-bottom-center';
-            document.getElementById('finalButton').style.opacity = '0';
-            document.getElementById('continueBtn').classList.remove('visible');
             
             setTimeout(() => {
                 playNarratorSegments();
