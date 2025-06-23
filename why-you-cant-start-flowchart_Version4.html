@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Why You Can't Start</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* Entry Screen Styles */
+        .entry-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000 0%, #1a0033 50%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 2s ease-out;
+        }
+
+        .entry-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .diagnostic-orb {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(138, 43, 226, 0.6) 30%,
+                rgba(75, 0, 130, 0.4) 60%,
+                rgba(25, 25, 112, 0.8) 100%);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 0 50px rgba(138, 43, 226, 0.8),
+                inset 0 0 30px rgba(255, 255, 255, 0.2);
+            animation: orbPulse 3s ease-in-out infinite, orbFloat 4s ease-in-out infinite;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .diagnostic-orb::before {
+            content: '🧠';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            animation: sparkle 2s ease-in-out infinite alternate;
+        }
+
+        .diagnostic-orb::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 60%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: innerGlow 3s linear infinite;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 0 50px rgba(138, 43, 226, 0.8),
+                    inset 0 0 30px rgba(255, 255, 255, 0.2);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 80px rgba(138, 43, 226, 1),
+                    0 0 120px rgba(255, 20, 147, 0.6),
+                    inset 0 0 40px rgba(255, 255, 255, 0.4);
+            }
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes sparkle {
+            0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        @keyframes innerGlow {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .entry-text {
+            color: #E6E6FA;
+            text-align: center;
+            font-size: 24px;
+            text-shadow: 0 0 20px rgba(230, 230, 250, 0.5);
+            margin-bottom: 20px;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        .entry-subtitle {
+            color: rgba(230, 230, 250, 0.7);
+            text-align: center;
+            font-size: 16px;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(230, 230, 250, 0.3);
+            margin-bottom: 30px;
+            animation: fadeInOut 3s ease-in-out infinite;
+        }
+
+        .click-prompt {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            text-align: center;
+            animation: pulseText 2s ease-in-out infinite;
+            margin-top: 20px;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 20px rgba(230, 230, 250, 0.5); }
+            100% { text-shadow: 0 0 30px rgba(230, 230, 250, 0.8), 0 0 40px rgba(138, 43, 226, 0.3); }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Floating mystical particles for entry screen */
+        .entry-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(138, 43, 226, 0.6);
+            border-radius: 50%;
+            animation: entryFloat 8s linear infinite;
+            box-shadow: 0 0 6px rgba(138, 43, 226, 0.8);
+        }
+
+        @keyframes entryFloat {
+            0% { 
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% { 
+                opacity: 1;
+                transform: translateY(90vh) translateX(10px) scale(1);
+            }
+            90% { 
+                opacity: 1;
+                transform: translateY(10vh) translateX(-10px) scale(1);
+            }
+            100% { 
+                transform: translateY(-10vh) translateX(20px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Intro Scene Styles */
+        .intro-scene {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease-in;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1500;
+        }
+
+        .intro-scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Main flowchart styles */
+        .main-scene {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease-in;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .main-scene.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Cosmic Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, 
+                rgba(75, 0, 130, 0.3) 0%, 
+                rgba(25, 25, 112, 0.2) 35%, 
+                rgba(0, 0, 0, 0.9) 70%,
+                #000 100%);
+            animation: cosmicShift 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes cosmicShift {
+            0% { 
+                background: radial-gradient(ellipse at center, 
+                    rgba(75, 0, 130, 0.3) 0%, 
+                    rgba(25, 25, 112, 0.2) 35%, 
+                    rgba(0, 0, 0, 0.9) 70%,
+                    #000 100%);
+            }
+            50% {
+                background: radial-gradient(ellipse at center, 
+                    rgba(147, 0, 211, 0.2) 0%, 
+                    rgba(72, 61, 139, 0.3) 35%, 
+                    rgba(25, 25, 112, 0.1) 70%,
+                    #000 100%);
+            }
+            100% { 
+                background: radial-gradient(ellipse at center, 
+                    rgba(199, 21, 133, 0.2) 0%, 
+                    rgba(138, 43, 226, 0.1) 35%, 
+                    rgba(0, 0, 0, 0.9) 70%,
+                    #000 100%);
+            }
+        }
+
+        /* Starfield */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(1); }
+            25% { opacity: 0.3; }
+            50% { opacity: 1; transform: scale(1.2); }
+            75% { opacity: 0.7; }
+        }
+
+        /* Moving Chatbox Container */
+        .moving-chatbox {
+            position: fixed;
+            width: 90%;
+            max-width: 600px;
+            z-index: 100;
+            opacity: 0;
+            transition: all 1.5s ease-in-out;
+            pointer-events: none;
+        }
+
+        .moving-chatbox.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .moving-chatbox.fade-out {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Position variations for the moving chatbox */
+        .position-bottom-center {
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .position-top-right {
+            top: 15%;
+            right: 5%;
+            transform: translateX(0);
+        }
+
+        .position-middle-left {
+            top: 40%;
+            left: 5%;
+            transform: translateY(-50%);
+        }
+
+        .position-bottom-left {
+            bottom: 20%;
+            left: 10%;
+            transform: translateX(0);
+        }
+
+        .position-top-center {
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .position-middle-right {
+            top: 50%;
+            right: 10%;
+            transform: translateY(-50%);
+        }
+
+        /* Game-style Chatbox */
+        .chatbox {
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid #8A2BE2;
+            border-radius: 15px;
+            padding: 25px 30px;
+            box-shadow: 
+                0 0 20px rgba(138, 43, 226, 0.5),
+                inset 0 0 20px rgba(138, 43, 226, 0.1);
+            position: relative;
+            animation: shimmer 4s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes shimmer {
+            0%, 100% { 
+                border-color: #8A2BE2;
+                box-shadow: 0 0 20px rgba(138, 43, 226, 0.5), inset 0 0 20px rgba(138, 43, 226, 0.1);
+            }
+            50% { 
+                border-color: #FF1493;
+                box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), inset 0 0 25px rgba(255, 20, 147, 0.1);
+            }
+        }
+
+        .narrator-label {
+            color: #FF1493;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+
+        .dialogue-text {
+            color: #E6E6FA;
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 40px;
+            text-shadow: 0 0 10px rgba(230, 230, 250, 0.3);
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 18px;
+            background: #FF1493;
+            margin-left: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .continue-btn {
+            background: linear-gradient(45deg, #8A2BE2, #FF1493);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+            font-family: 'Courier New', monospace;
+            width: 100%;
+        }
+
+        .continue-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.5);
+        }
+
+        /* Flowchart Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #E6E6FA;
+            text-shadow: 0 0 20px rgba(230, 230, 250, 0.5);
+            font-family: 'Courier New', monospace;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: rgba(230, 230, 250, 0.7);
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(230, 230, 250, 0.3);
+        }
+
+        .flowchart {
+            position: relative;
+            min-height: 600px;
+            padding: 2rem;
+        }
+
+        .node {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px solid #8A2BE2;
+            border-radius: 15px;
+            padding: 1rem;
+            min-width: 200px;
+            max-width: 280px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            transform-origin: center;
+            backdrop-filter: blur(10px);
+            font-family: 'Courier New', monospace;
+        }
+
+        .node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.8);
+            border-color: #FF1493;
+        }
+
+        .node.active {
+            border-color: #FF1493;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
+        }
+
+        .node-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+            color: #E6E6FA;
+            text-shadow: 0 0 10px rgba(230, 230, 250, 0.3);
+        }
+
+        .choices {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .choices.visible {
+            display: block;
+        }
+
+        .choice-btn {
+            background: linear-gradient(45deg, #8A2BE2, #FF1493);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.5);
+        }
+
+        .terminal-node {
+            background: rgba(25, 25, 112, 0.3);
+            border-color: #FFD700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .terminal-text {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1rem;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .connection {
+            position: absolute;
+            background: linear-gradient(90deg, #8A2BE2, #FF1493);
+            height: 2px;
+            transform-origin: left center;
+            opacity: 0.6;
+            z-index: -1;
+            box-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #8A2BE2, #FF1493);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(138, 43, 226, 0.5);
+        }
+
+        .path-display {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #8A2BE2;
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 300px;
+            font-size: 0.85rem;
+            color: #E6E6FA;
+            text-shadow: 0 0 10px rgba(230, 230, 250, 0.3);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+            backdrop-filter: blur(10px);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid #8A2BE2;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: #E6E6FA;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            z-index: 200;
+            font-family: 'Courier New', monospace;
+        }
+
+        .music-toggle:hover {
+            background: rgba(138, 43, 226, 0.4);
+            transform: scale(1.1);
+        }
+
+        .music-toggle.playing {
+            animation: musicPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .entry-text {
+                font-size: 20px;
+                padding: 0 20px;
+            }
+            
+            .entry-subtitle {
+                font-size: 14px;
+                padding: 0 20px;
+            }
+            
+            .diagnostic-orb {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .moving-chatbox {
+                width: 95%;
+                max-width: none;
+            }
+            
+            .chatbox {
+                padding: 20px;
+            }
+            
+            .dialogue-text {
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .node {
+                min-width: 150px;
+                max-width: 200px;
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+            
+            .controls {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 1rem 0;
+            }
+            
+            .path-display {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin: 1rem auto;
+                max-width: 100%;
+            }
+
+            /* Mobile-specific positioning */
+            .position-top-right, .position-middle-right {
+                right: 2.5%;
+            }
+            
+            .position-middle-left, .position-bottom-left {
+                left: 2.5%;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes nodeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .node.new {
+            animation: nodeAppear 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Entry Screen -->
+    <div class="entry-screen" id="entryScreen">
+        <div class="diagnostic-orb" id="diagnosticOrb"></div>
+        <div class="entry-text">🧠 A Diagnostic Tool Awaits</div>
+        <div class="entry-subtitle">For when your brain is cosplaying as a broken GPS...</div>
+        <div class="click-prompt">✨ Touch the orb to begin your journey ✨</div>
+    </div>
+
+    <!-- Intro Scene -->
+    <div class="intro-scene" id="introScene">
+        <div class="cosmic-bg"></div>
+        
+        <!-- Moving chatbox that will be repositioned -->
+        <div class="moving-chatbox position-bottom-center" id="movingChatbox">
+            <div class="chatbox">
+                <div class="narrator-label">THE GUIDE</div>
+                <div class="dialogue-text" id="dialogue"></div>
+            </div>
+        </div>
+
+        <!-- Final continue button (separate from moving chatbox) -->
+        <div class="moving-chatbox position-bottom-center" id="finalButton" style="opacity: 0;">
+            <div class="chatbox">
+                <button class="continue-btn" id="continueBtn" onclick="enterMainApp()">
+                    Enter the Diagnostic Zone
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="main-scene" id="mainScene">
+        <div class="cosmic-bg" id="mainCosmicBg"></div>
+        
+        <div class="container">
+            <h1>Why You Can't Start</h1>
+            <p class="subtitle">A darkly humorous diagnostic tool for when your brain is being a particularly unhelpful roommate</p>
+            
+            <div class="controls">
+                <button class="btn" onclick="startOver()">Start Over</button>
+                <button class="btn" onclick="downloadPath()">Save My Journey</button>
+                <button class="btn" onclick="showIntro()">Replay Intro</button>
+            </div>
+
+            <div class="flowchart" id="flowchart">
+                <!-- Nodes will be dynamically created here -->
+            </div>
+
+            <div class="path-display hidden" id="pathDisplay">
+                <strong>Your Path:</strong>
+                <div id="pathText"></div>
+            </div>
+        </div>
+
+        <div class="music-toggle" id="musicToggle" title="Toggle ambient sound">♪</div>
+    </div>
+
+    <script>
+        // Narrator dialogue segments with positions and timing
+        const narratorSegments = [
+            {
+                text: "Welcome back. You're still here, which means either you're desperate, masochistic, or human.",
+                position: "position-bottom-center",
+                duration: 4000
+            },
+            {
+                text: "Regardless—congrats.",
+                position: "position-top-right",
+                duration: 2500
+            },
+            {
+                text: "*adjusts broken halo and checks clipboard*",
+                position: "position-middle-left",
+                duration: 3000
+            },
+            {
+                text: "So you're here because your brain decided to cosplay as a broken GPS again, huh? Maybe you're staring at a task like it personally wronged you in a past life.",
+                position: "position-bottom-left",
+                duration: 5500
+            },
+            {
+                text: "Or perhaps you're one of those beautiful humans trying to understand why someone you care about seems to be locked in an eternal staring contest with their to-do list.",
+                position: "position-top-center",
+                duration: 6000
+            },
+            {
+                text: "Either way, welcome to the 'Why You Can't Start' diagnostic flowchart—",
+                position: "position-middle-right",
+                duration: 4000
+            },
+            {
+                text: "Think of it as WebMD for your executive dysfunction, but with significantly more empathy and considerably fewer suggestions that you might be dying.",
+                position: "position-bottom-center",
+                duration: 6500
+            },
+            {
+                text: "Okay. Pause. Did that last bit hit too close to home? That means it's working.",
+                position: "position-top-right",
+                duration: 4500
+            },
+            {
+                text: "This little interactive adventure is going to walk you through the delightfully twisted maze of reasons why your brain might be staging a rebellion against productivity.",
+                position: "position-middle-left",
+                duration: 6000
+            },
+            {
+                text: "We're talking about the REAL reasons—not the 'you're just lazy' nonsense that society loves to throw around like confetti at a particularly depressing party.",
+                position: "position-bottom-left",
+                duration: 6500
+            },
+            {
+                text: "Whether you're here because you've never had words for what's happening in your head, or you're trying to understand someone else's beautiful, chaotic neural landscape—this is for you.",
+                position: "position-top-center",
+                duration: 7000
+            },
+            {
+                text: "We're going meta, we're getting real, and yes, we're absolutely making jokes about the existential dread of late-stage capitalism.",
+                position: "position-middle-right",
+                duration: 5500
+            },
+            {
+                text: "Consider this a little reward for all that heavy emotional work you've been doing—reading, growing, trying to figure out this whole 'being human' thing.",
+                position: "position-bottom-center",
+                duration: 6500
+            },
+            {
+                text: "I hope you're having fun so far, because we're about to dive into the wonderfully weird world of why our brains sometimes treat simple tasks like they're asking us to perform brain surgery while riding a unicycle.",
+                position: "position-top-right",
+                duration: 8000
+            },
+            {
+                text: "I've seen the monsters in this chapter. I named a few of them. Keep going.",
+                position: "position-middle-left",
+                duration: 4000
+            },
+            {
+                text: "You're not broken. You're just early in the story.",
+                position: "position-bottom-left",
+                duration: 3500
+            },
+            {
+                text: "You do not have to become a productivity machine. You are already a goddamn miracle.",
+                position: "position-top-center",
+                duration: 4500
+            },
+            {
+                text: "(Also? They get twitchy when people go off-script.)",
+                position: "position-middle-right",
+                duration: 3000
+            },
+            {
+                text: "Ready to meet your mind's most creative excuses?",
+                position: "position-bottom-center",
+                duration: 3500
+            }
+        ];
+
+        let currentSegmentIndex = 0;
+        let currentPath = [];
+        let activeNodes = new Set();
+        let typewriterIndex = 0;
+        let isTyping = false;
+        let audioContext = null;
+
+        const flowchartData = {
+            start: {
+                text: "Why can't I just do the thing?",
+                x: 400,
+                y: 50,
+                choices: [
+                    { text: "The thing haunts me", next: "haunted" },
+                    { text: "The thing is too big", next: "tooBig" },
+                    { text: "I am but a hollow shell", next: "hollow" },
+                    { text: "My brain is a broken GPS", next: "brokenGPS" }
+                ]
+            },
+            haunted: {
+                text: "Are you emotionally haunted by this task?",
+                x: 150,
+                y: 200,
+                choices: [
+                    { text: "Yes, it whispers judgments", next: "trauma" },
+                    { text: "No, just regular haunted", next: "perfectMood" }
+                ]
+            },
+            tooBig: {
+                text: "Is the task too big, like trying to eat a whole watermelon in one bite?",
+                x: 650,
+                y: 200,
+                choices: [
+                    { text: "Yes, I'm drowning in watermelon", next: "breakDown" },
+                    { text: "No, it's bite-sized but cursed", next: "cursed" }
+                ]
+            },
+            hollow: {
+                text: "Have you eaten a food not classified as 'dust' today?",
+                x: 150,
+                y: 350,
+                choices: [
+                    { text: "Food is a social construct", next: "needFood" },
+                    { text: "Yes, I'm adequately fueled", next: "rebellion" }
+                ]
+            },
+            brokenGPS: {
+                text: "Are you unsure where to start because you never learned how?",
+                x: 650,
+                y: 350,
+                choices: [
+                    { text: "My parents taught me shame, not systems", next: "noFramework" },
+                    { text: "I know how, I just can't", next: "executive" }
+                ]
+            },
+            trauma: {
+                text: "Did your parents teach you productivity was moral worth?",
+                x: 50,
+                y: 350,
+                choices: [
+                    { text: "Yes, I am what I produce", next: "moralWorth" },
+                    { text: "No, different flavor of trauma", next: "otherTrauma" }
+                ]
+            },
+            perfectMood: {
+                text: "Are you waiting to be in the perfect mood?",
+                x: 250,
+                y: 350,
+                choices: [
+                    { text: "Yes, waiting for the stars to align", next: "perfection" },
+                    { text: "No, my mood is irrelevant", next: "blanket" }
+                ]
+            },
+            breakDown: {
+                text: "You need to break this watermelon of a task into tiny, manageable bites. That's not laziness, that's strategy. Your brain isn't broken—it just needs a different approach.",
+                x: 550,
+                y: 350,
+                terminal: true
+            },
+            cursed: {
+                text: "Sometimes tasks feel cursed not because they're hard, but because they represent something we're avoiding. What is this task really about?",
+                x: 750,
+                y: 350,
+                terminal: true
+            },
+            needFood: {
+                text: "Your brain runs on glucose, not willpower. Go eat something with actual nutrients. This isn't procrastination—it's basic maintenance.",
+                x: 50,
+                y: 500,
+                terminal: true
+            },
+            rebellion: {
+                text: "Are you subconsciously staging a rebellion against late-stage capitalism?",
+                x: 250,
+                y: 500,
+                choices: [
+                    { text: "Yes, down with productivity culture", next: "capitalism" },
+                    { text: "No, this is personal resistance", next: "personalRebellion" }
+                ]
+            },
+            noFramework: {
+                text: "You're not lazy—you're missing the instruction manual everyone else got. This is about learning systems, not fixing character flaws.",
+                x: 550,
+                y: 500,
+                terminal: true
+            },
+            executive: {
+                text: "That's not a lack of discipline, that's executive dysfunction in cosplay. Your brain's task-starting engine needs a different kind of fuel.",
+                x: 750,
+                y: 500,
+                terminal: true
+            },
+            moralWorth: {
+                text: "You are not what you produce. Your worth isn't measured in checkboxes. This paralysis? It's your psyche protecting you from impossible standards.",
+                x: 50,
+                y: 650,
+                terminal: true
+            },
+            otherTrauma: {
+                text: "Trauma responses don't always look like crying. Sometimes they look like staring at a simple task for 3 hours. Be gentle with your nervous system.",
+                x: 150,
+                y: 650,
+                terminal: true
+            },
+            perfection: {
+                text: "Perfect conditions are a myth. The 'right mood' is like waiting for a unicorn. Start ugly, start wrong, just start.",
+                x: 250,
+                y: 650,
+                terminal: true
+            },
+            blanket: {
+                text: "Are you currently crying under a blanket?",
+                x: 350,
+                y: 650,
+                choices: [
+                    { text: "Yes, blankets are my habitat", next: "blanketLife" },
+                    { text: "No, but tempted", next: "overwhelming" }
+                ]
+            },
+            capitalism: {
+                text: "Valid rebellion. The system that demands constant productivity is the same one burning out our planet. Your resistance makes sense.",
+                x: 150,
+                y: 800,
+                terminal: true
+            },
+            personalRebellion: {
+                text: "Sometimes not doing the thing IS the thing. Maybe you're protecting your energy for something that actually matters.",
+                x: 250,
+                y: 800,
+                terminal: true
+            },
+            blanketLife: {
+                text: "Blankets are valid emotional infrastructure. Take your time. The task will wait. You're not broken—you're overwhelmed.",
+                x: 350,
+                y: 800,
+                terminal: true
+            },
+            overwhelming: {
+                text: "Overwhelm is information. It's your system saying 'this is too much right now.' Listen to it. Scale down. Try one tiny thing.",
+                x: 450,
+                y: 800,
+                terminal: true
+            }
+        };
+
+        // Create floating particles for entry screen
+        function createEntryParticles() {
+            const entryScreen = document.getElementById('entryScreen');
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'entry-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                entryScreen.appendChild(particle);
+            }
+        }
+
+        // Create starfield
+        function createStarfield(container) {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(star);
+            }
+        }
+
+        // Typewriter effect for individual segments
+        function typeWriter(text, element, onComplete) {
+            return new Promise((resolve) => {
+                isTyping = true;
+                element.innerHTML = '';
+                
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                element.appendChild(cursor);
+                
+                let i = 0;
+                function type() {
+                    if (i < text.length) {
+                        cursor.remove();
+                        
+                        const char = text.charAt(i);
+                        element.innerHTML += char;
+                        
+                        if (char !== ' ' && char !== '\n') {
+                            playTypingSound();
+                        }
+                        
+                        element.appendChild(cursor);
+                        
+                        let delay = 30;
+                        if (char === '.' || char === '!' || char === '?') {
+                            delay = 400;
+                        } else if (char === ',' || char === ';') {
+                            delay = 200;
+                        } else if (char === ' ') {
+                            delay = 20;
+                        }
+                        
+                        i++;
+                        setTimeout(type, delay);
+                    } else {
+                        setTimeout(() => {
+                            cursor.remove();
+                            isTyping = false;
+                            if (onComplete) onComplete();
+                            resolve();
+                        }, 500);
+                    }
+                }
+                type();
+            });
+        }
+
+        // Play narrator segments with movement
+        async function playNarratorSegments() {
+            const chatbox = document.getElementById('movingChatbox');
+            const dialogue = document.getElementById('dialogue');
+            
+            for (let i = 0; i < narratorSegments.length; i++) {
+                const segment = narratorSegments[i];
+                
+                // Fade out current chatbox
+                if (i > 0) {
+                    chatbox.classList.add('fade-out');
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                }
+                
+                // Change position
+                chatbox.className = `moving-chatbox ${segment.position}`;
+                
+                // Fade in at new position
+                chatbox.classList.remove('fade-out');
+                chatbox.classList.add('visible');
+                
+                // Type the text
+                await typeWriter(segment.text, dialogue);
+                
+                // Wait for duration
+                await new Promise(resolve => setTimeout(resolve, segment.duration));
+            }
+            
+            // Final fade out and show continue button
+            chatbox.classList.add('fade-out');
+            setTimeout(() => {
+                const finalButton = document.getElementById('finalButton');
+                finalButton.style.opacity = '1';
+                document.getElementById('continueBtn').classList.add('visible');
+            }, 800);
+        }
+
+        // Typing sound effect
+        function playTypingSound() {
+            if (!audioContext) return;
+            
+            try {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                const filter = audioContext.createBiquadFilter();
+                
+                const notes = [523.25, 587.33, 659.25, 698.46, 783.99];
+                const randomNote = notes[Math.floor(Math.random() * notes.length)];
+                
+                oscillator.frequency.setValueAtTime(randomNote, audioContext.currentTime);
+                oscillator.type = 'triangle';
+                
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2000, audioContext.currentTime);
+                filter.Q.setValueAtTime(1, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+                
+                oscillator.frequency.exponentialRampToValueAtTime(randomNote * 0.95, audioContext.currentTime + 0.1);
+                
+                oscillator.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.15);
+            } catch (e) {
+                // Silently fail
+            }
+        }
+
+        function startMainExperience() {
+            const entryScreen = document.getElementById('entryScreen');
+            const introScene = document.getElementById('introScene');
+            
+            // Initialize audio context
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            entryScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                introScene.classList.add('active');
+                createStarfield(document.querySelector('#introScene .cosmic-bg'));
+                
+                setTimeout(() => {
+                    playNarratorSegments();
+                }, 1000);
+            }, 1000);
+            
+            setTimeout(() => {
+                entryScreen.style.display = 'none';
+            }, 2000);
+        }
+
+        function enterMainApp() {
+            const introScene = document.getElementById('introScene');
+            const mainScene = document.getElementById('mainScene');
+            
+            introScene.classList.remove('active');
+            
+            setTimeout(() => {
+                mainScene.classList.add('active');
+                createStarfield(document.getElementById('mainCosmicBg'));
+                initializeFlowchart();
+            }, 1000);
+        }
+
+        function showIntro() {
+            const introScene = document.getElementById('introScene');
+            const mainScene = document.getElementById('mainScene');
+            
+            mainScene.classList.remove('active');
+            introScene.classList.add('active');
+            
+            // Reset intro state
+            currentSegmentIndex = 0;
+            document.getElementById('movingChatbox').className = 'moving-chatbox position-bottom-center';
+            document.getElementById('finalButton').style.opacity = '0';
+            document.getElementById('continueBtn').classList.remove('visible');
+            
+            setTimeout(() => {
+                playNarratorSegments();
+            }, 500);
+        }
+
+        function initializeFlowchart() {
+            const flowchart = document.getElementById('flowchart');
+            flowchart.innerHTML = '';
+            currentPath = [];
+            activeNodes.clear();
+            updatePathDisplay();
+            
+            const startNode = createNode('start', flowchartData.start);
+            flowchart.appendChild(startNode);
+            activeNodes.add('start');
+        }
+
+        function createNode(id, data) {
+            const node = document.createElement('div');
+            node.className = 'node';
+            if (data.terminal) {
+                node.className += ' terminal-node';
+            }
+            node.id = id;
+            node.style.left = data.x + 'px';
+            node.style.top = data.y + 'px';
+
+            const textDiv = document.createElement('div');
+            textDiv.className = data.terminal ? 'terminal-text' : 'node-text';
+            textDiv.textContent = data.text;
+            node.appendChild(textDiv);
+
+            if (!data.terminal && data.choices) {
+                const choicesDiv = document.createElement('div');
+                choicesDiv.className = 'choices';
+                
+                data.choices.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.textContent = choice.text;
+                    btn.onclick = () => selectChoice(id, choice);
+                    choicesDiv.appendChild(btn);
+                });
+
+                node.appendChild(choicesDiv);
+                
+                node.onclick = () => {
+                    if (!data.terminal) {
+                        choicesDiv.classList.toggle('visible');
+                        node.classList.toggle('active');
+                    }
+                };
+            }
+
+            node.classList.add('new');
+            return node;
+        }
+
+        function selectChoice(fromId, choice) {
+            currentPath.push(choice.text);
+            updatePathDisplay();
+
+            const fromNode = document.getElementById(fromId);
+            const choicesDiv = fromNode.querySelector('.choices');
+            if (choicesDiv) {
+                choicesDiv.style.display = 'none';
+            }
+
+            const nextData = flowchartData[choice.next];
+            if (nextData) {
+                const flowchart = document.getElementById('flowchart');
+                const nextNode = createNode(choice.next, nextData);
+                flowchart.appendChild(nextNode);
+                activeNodes.add(choice.next);
+
+                createConnection(fromId, choice.next);
+
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        nextNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                }
+            }
+        }
+
+        function createConnection(fromId, toId) {
+            const fromNode = document.getElementById(fromId);
+            const toNode = document.getElementById(toId);
+            
+            if (!fromNode || !toNode) return;
+
+            const fromX = fromNode.offsetLeft + fromNode.offsetWidth / 2;
+            const fromY = fromNode.offsetTop + fromNode.offsetHeight;
+            const toX = toNode.offsetLeft + toNode.offsetWidth / 2;
+            const toY = toNode.offsetTop;
+
+            const connection = document.createElement('div');
+            connection.className = 'connection';
+            
+            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+            const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+
+            connection.style.left = fromX + 'px';
+            connection.style.top = fromY + 'px';
+            connection.style.width = length + 'px';
+            connection.style.transform = `rotate(${angle}deg)`;
+
+            document.getElementById('flowchart').appendChild(connection);
+        }
+
+        function updatePathDisplay() {
+            const pathDisplay = document.getElementById('pathDisplay');
+            const pathText = document.getElementById('pathText');
+            
+            if (currentPath.length > 0) {
+                pathDisplay.classList.remove('hidden');
+                pathText.innerHTML = currentPath.map((step, index) => 
+                    `${index + 1}. ${step}`
+                ).join('<br>');
+            } else {
+                pathDisplay.classList.add('hidden');
+            }
+        }
+
+        function startOver() {
+            initializeFlowchart();
+        }
+
+        function downloadPath() {
+            if (currentPath.length === 0) {
+                alert("Take the journey first, then save your wisdom!");
+                return;
+            }
+
+            const pathText = `My "Why You Can't Start" Journey:\n\n${currentPath.map((step, index) => 
+                `${index + 1}. ${step}`
+            ).join('\n')}\n\nGenerated by: Why You Can't Start Flowchart\nCreated by: Michaelrobins938\n${window.location.href}`;
+
+            const blob = new Blob([pathText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-cant-start-journey.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleMusic() {
+            const musicToggle = document.getElementById('musicToggle');
+            musicToggle.classList.toggle('playing');
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            createEntryParticles();
+            
+            const entryScreen = document.getElementById('entryScreen');
+            const diagnosticOrb = document.getElementById('diagnosticOrb');
+            
+            entryScreen.addEventListener('click', startMainExperience);
+            diagnosticOrb.addEventListener('click', function(e) {
+                e.stopPropagation();
+                startMainExperience();
+            });
+            
+            entryScreen.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startMainExperience();
+            });
+            
+            document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+        });
+    </script>
+</body>
+</html>
